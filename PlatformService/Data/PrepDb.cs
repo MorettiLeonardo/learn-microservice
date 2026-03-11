@@ -1,0 +1,36 @@
+using PlatformService.Models;
+
+namespace PlatformService.Data
+{
+    public static class PrepDb
+    {
+        public static void PrepPopulation(IApplicationBuilder app)
+        {
+            using( var serviceScop = app.ApplicationServices.CreateScope())
+            {
+                //talvez tenha que colocar GetService
+                SeedData(serviceScop.ServiceProvider.GetRequiredService<AppDbContext>());
+            };        
+        }
+
+        private static void SeedData(AppDbContext context)
+        {
+            if (!context.Platforms.Any())
+            {
+                Console.WriteLine("--> Seeding data");
+
+                context.Platforms.AddRange(
+                    new Platform() { Name = "Dot Net", Publisher = "Microsoft", Cost = "Free"},
+                    new Platform() { Name = "SQL SERVER", Publisher = "Microsoft", Cost = "Free"},
+                    new Platform() { Name = "Kubernetes", Publisher = "Cloud Native", Cost = "Free"}
+                );
+
+                context.SaveChanges();
+            }
+            else
+            {
+                Console.WriteLine("--> We already have data");
+            }
+        }
+    }
+}
